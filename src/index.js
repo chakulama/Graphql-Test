@@ -3,18 +3,20 @@ import { GraphQLServer } from 'graphql-yoga'
 //Type definitions(schema -data structures)
 const typeDefs= `
      type Query {
-         greeting(name:String):String
-         add(a:Float!,b:Float):Float!
-               me:Persona!
+                 me:Persona!
+               personas(query:String):[Persona!]!
                post:Post!
                 }
 
+        type Mutation{
+            createPersona(username:String!,password:String!,rol:String!, puntos:Int):[Persona!]!
+        }
 
      type Persona{
         username:String!,
         password:String!,
         rol:String!,
-        puntos:Int!
+        puntos:Int
      }  
      type Post{
         Id:ID!,
@@ -25,11 +27,35 @@ const typeDefs= `
 
 `
 
-
+//demo userdata
+const personas=[{
+    username:'Binod',
+    password:'BBB',
+    rol:'Student',
+    puntos:10
+},
+{
+    username:'Yelan',
+    password:'CCC',
+    rol:'Student',
+    puntos:10
+}
+]
 
 //resolvers(setr of functions)
 const resolvers={
-    Query:{       
+    Query:{  
+       
+        personas(parent,args,ctx,info){
+            if (!args.query)
+            {
+                return  personas
+            }
+            return personas.filter(personas =>{
+                return personas.rol.toLowerCase().includes(args.query.toLowerCase())
+            })
+        },
+
         me()
         {
             return {
@@ -49,21 +75,34 @@ const resolvers={
         published:false
             } 
 
-        },
+        }
+      
+    
 
-      greeting(parent,args)
-      {
-        console.log(args)
-        if (args.name)
-        { return "HELLO: "+args.name}
-        else
-        {return "HELLO AAAAA !"} 
+    },
+    Mutation :{
+        createPersona(parent,args,ctx,info){
         
-      },
-      add(parent, args){
-          return args.a + args.b
-      }
+            const usernameTaken=personas.some(personas=>
+                personas.username===args.username)
+           if (usernameTaken)
+           {
+               throw new Error('Username is taken.')
+           }
+           const persona={
+               username :args.username,
+               password:args.password,
+               rol:args.rol,
+               puntos:args.puntos
+           }
+           personas.push(persona)
+           console.log(personas)
 
+           return personas
+          
+                
+
+        }
     }
 }
 
