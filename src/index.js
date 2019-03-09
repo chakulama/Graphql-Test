@@ -89,11 +89,12 @@ const resolvers={
            {
                throw new Error('Username is taken.')
            }
+
+
+
+
            const persona={
-               username :args.username,
-               password:args.password,
-               rol:args.rol,
-               puntos:args.puntos
+              ...args
            }
            personas.push(persona)
            console.log(personas)
