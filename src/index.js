@@ -10,6 +10,7 @@ const typeDefs= `
 
         type Mutation{
             createPersona(data:CreatPersonaInput):[Persona!]!
+            deletePersona(username:String):Persona!
         }
 
         input CreatPersonaInput{
@@ -104,6 +105,18 @@ const resolvers={
 
            return personas
           
+        },
+
+        deletePersona(parent,args,ctx,info){
+
+            const userIndex= personas.findIndex((persona)=>persona.username=== args.username)
+            if (userIndex ===-1)
+            {
+throw new Error('Persona not found')
+            }
+            const deletePersona=personas.splice(userIndex,1)
+
+            return deletePersona[0]
         }
     }
 }
