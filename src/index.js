@@ -9,9 +9,17 @@ const typeDefs= `
                 }
 
         type Mutation{
-            createPersona(username:String!,password:String!,rol:String!, puntos:Int):[Persona!]!
+            createPersona(data:CreatPersonaInput):[Persona!]!
         }
 
+        input CreatPersonaInput{
+            username:String!,
+            password:String!,
+            rol:String!,
+             puntos:Int
+             
+        }
+           
      type Persona{
         username:String!,
         password:String!,
@@ -77,38 +85,28 @@ const resolvers={
 
         }
       
-    
-
     },
     Mutation :{
         createPersona(parent,args,ctx,info){
         
             const usernameTaken=personas.some(personas=>
-                personas.username===args.username)
+                personas.username===args.data.username)
            if (usernameTaken)
            {
                throw new Error('Username is taken.')
            }
 
-
-
-
            const persona={
-              ...args
+              ...args.data
            }
            personas.push(persona)
            console.log(personas)
 
            return personas
           
-                
-
         }
     }
 }
-
-
-
 
 const server = new GraphQLServer({
     typeDefs,
