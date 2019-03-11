@@ -1,129 +1,19 @@
 import { GraphQLServer } from 'graphql-yoga'
+import db  from './db'
 
-//Type definitions(schema -data structures)
-const typeDefs= `
-     type Query {
-                 me:Persona!
-               personas(query:String):[Persona!]!
-               post:Post!
-                }
-
-        type Mutation{
-            createPersona(data:CreatPersonaInput):[Persona!]!
-            deletePersona(username:String):Persona!
-        }
-
-        input CreatPersonaInput{
-            username:String!,
-            password:String!,
-            rol:String!,
-             puntos:Int
-             
-        }
-           
-     type Persona{
-        username:String!,
-        password:String!,
-        rol:String!,
-        puntos:Int
-     }  
-     type Post{
-        Id:ID!,
-        title:String!,
-        body:String!,
-        published:Boolean!
-     }            
-
-`
-
-//demo userdata
-const personas=[{
-    username:'Binod',
-    password:'BBB',
-    rol:'Student',
-    puntos:10
-},
-{
-    username:'Yelan',
-    password:'CCC',
-    rol:'Student',
-    puntos:10
-}
-]
-
-//resolvers(setr of functions)
-const resolvers={
-    Query:{  
-       
-        personas(parent,args,ctx,info){
-            if (!args.query)
-            {
-                return  personas
-            }
-            return personas.filter(personas =>{
-                return personas.rol.toLowerCase().includes(args.query.toLowerCase())
-            })
-        },
-
-        me()
-        {
-            return {
-                username:'Binod',
-                password:'BBB',
-                rol:'Student',
-                puntos:10
-
-            } 
-        },
-        post()
-        {
-            return {
-                Id:'aaa',
-        title:'Graphql',
-        body:'Building first api',
-        published:false
-            } 
-
-        }
-      
-    },
-    Mutation :{
-        createPersona(parent,args,ctx,info){
-        
-            const usernameTaken=personas.some(personas=>
-                personas.username===args.data.username)
-           if (usernameTaken)
-           {
-               throw new Error('Username is taken.')
-           }
-
-           const persona={
-              ...args.data
-           }
-           personas.push(persona)
-           console.log(personas)
-
-           return personas
-          
-        },
-
-        deletePersona(parent,args,ctx,info){
-
-            const userIndex= personas.findIndex((persona)=>persona.username=== args.username)
-            if (userIndex ===-1)
-            {
-throw new Error('Persona not found')
-            }
-            const deletePersona=personas.splice(userIndex,1)
-
-            return deletePersona[0]
-        }
-    }
-}
+import Query from './resolvers/Query.js'
+import Mutation from './resolvers/Mutation.js'
 
 const server = new GraphQLServer({
-    typeDefs,
-    resolvers
+    typeDefs: './src/schema.graphql',
+    resolvers :{
+        Query,
+        Mutation
+    },
+    context:{
+        db
+
+    }
 })
 
 server.start(()=>{

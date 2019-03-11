@@ -1,0 +1,45 @@
+type Query {
+                 me:Persona!
+               personas(query:String):[Persona!]!
+               post:Post!
+                }
+
+ type Mutation
+ {
+            createPersona(data:CreatPersonaInput):[Persona!]!
+            deletePersona(username:String):Persona!
+            updatePersona(username:String!,data:updatePersona):Persona
+}
+
+input updatePersona{
+        username:String,
+        password:String,
+        rol:String,
+        puntos:Int
+
+}
+
+input CreatPersonaInput
+         {
+            username:String!,
+            password:String!,
+            rol:String!,
+             puntos:Int
+             }
+           
+ type Persona
+         {
+                  username:String!,
+                  password:String!,
+                  rol:String!,
+                  puntos:Int
+         }  
+
+ type Post
+ {
+        Id:ID!,
+        title:String!,
+        body:String!,
+        published:Boolean!
+   }            
+
