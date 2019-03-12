@@ -11,22 +11,12 @@ type Query {
             updatePersona(username:String!,data:updatePersona):Persona
 }
 
-input updatePersona{
-        username:String,
-        password:String,
-        rol:String,
-        puntos:Int
+ type Subscription {
+            count:Int!
+           persona: Persona!
+    }  
 
-}
 
-input CreatPersonaInput
-         {
-            username:String!,
-            password:String!,
-            rol:String!,
-             puntos:Int
-             }
-           
  type Persona
          {
                   username:String!,
@@ -43,3 +33,21 @@ input CreatPersonaInput
         published:Boolean!
    }            
 
+input updatePersona{
+        username:String,
+        password:String,
+        rol:String,
+        puntos:Int
+
+}
+
+input CreatPersonaInput
+         {
+            username:String!,
+            password:String!,
+            rol:String!,
+             puntos:Int
+             }
+
+
+          

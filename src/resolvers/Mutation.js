@@ -1,5 +1,5 @@
 const Mutation ={
-    createPersona(parent,args,{db},info){
+    createPersona(parent,args,{db,pubsub},info){
     
         const usernameTaken=db.personas.some(personas=>
             personas.username===args.data.username)
@@ -12,9 +12,12 @@ const Mutation ={
        const persona={
           ...args.data
        }
-       console.log(usernameTaken)
+       console.log("usernameTaken "+usernameTaken)
        console.log(persona)
        db.personas.push(persona)
+       console.log("publish:"+pubsub.publish(`persona ${args.data.username}`,{persona}))
+       
+       pubsub.publish('persona',{puntos:persona.puntos})
        
        return db.personas
       
@@ -32,7 +35,7 @@ const Mutation ={
         return deletePersona[0]
     },
 
-    updatePersona(parent,args,{db},info)
+    updatePersona(parent,args,{db ,pubsub},info)
     {
         
     const persona= db.personas.find((persona)=>persona.username===args.username)
@@ -41,11 +44,10 @@ if (!persona){
     throw new Error("Persona not found")
 }
 
-
 if (typeof args.data.puntos==='number'){
 
     persona.puntos=args.data.puntos
-    
+   
 }
 
 return persona
